@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Phone Guard — Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Background FX -->
+  <div class="bg">
+    <div class="grid"></div>
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+    <div class="noise"></div>
+  </div>
+
+  <main class="wrap">
+    <div class="brand">
+      <div class="logo">PG</div>
+      <div class="brandText">
+        <h1>Phone Guard</h1>
+        <p>Secure Access • Futuristic Panel</p>
+      </div>
+    </div>
+
+    <section class="card">
+      <div class="tabs">
+        <button class="tab active" id="tabLogin" type="button">Login</button>
+        <button class="tab" id="tabRegister" type="button">Register</button>
+        <div class="tabGlow"></div>
+      </div>
+
+      <!-- LOGIN -->
+      <form class="panel show" id="loginForm" autocomplete="on">
+        <div class="field">
+          <label>Email</label>
+          <input id="loginEmail" type="email" placeholder="your@gmail.com" required />
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <div class="passRow">
+            <input id="loginPassword" type="password" placeholder="••••••••" required />
+            <button type="button" class="eye" data-toggle="#loginPassword">👁</button>
+          </div>
+        </div>
+
+        <!-- ✅ must be submit -->
+        <button class="btn primary" type="submit">Login</button>
+
+        <div class="hint"><span id="loginMsg" class="msg"></span></div>
+      </form>
+
+      <!-- REGISTER -->
+      <form class="panel" id="registerForm" autocomplete="on">
+        <div class="field">
+          <label>Name</label>
+          <input id="regName" type="text" placeholder="Your name" minlength="2" required />
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input id="regEmail" type="email" placeholder="your@gmail.com" required />
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <div class="passRow">
+            <input id="regPassword" type="password" placeholder="min 6 characters" minlength="6" required />
+            <button type="button" class="eye" data-toggle="#regPassword">👁</button>
+          </div>
+        </div>
+
+        <!-- ✅ must be submit -->
+        <button class="btn primary" type="submit">Create Account</button>
+
+        <div class="hint"><span id="regMsg" class="msg"></span></div>
+      </form>
+
+      <div class="footer">
+        <span>Login success → <b>home.html</b></span>
+      </div>
+    </section>
+  </main>
+
+  <!-- ✅ must be module -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
