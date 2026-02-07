@@ -1,1 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Phone Guard — Home</title>
+  <style>
+    :root{
+      --bg:#070a12;
+      --card: rgba(20, 26, 44, .55);
+      --stroke: rgba(120, 255, 233, .22);
+      --text:#e9f3ff;
+      --muted:#9fb2cc;
+      --aqua:#3fffd8;
+      --blue:#49a6ff;
+      --shadow: 0 30px 80px rgba(0,0,0,.55);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--text);
+      background: var(--bg);
+      overflow-x:hidden;
+    }
 
+    /* background fx */
+    .bg{position:fixed; inset:0; z-index:-1; overflow:hidden}
+    .grid{
+      position:absolute; inset:-20%;
+      background:
+        linear-gradient(to right, rgba(73,166,255,.09) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(63,255,216,.07) 1px, transparent 1px);
+      background-size: 60px 60px;
+      transform: rotate(-10deg);
+      filter: blur(.2px);
+      animation: drift 10s linear infinite;
+      opacity:.55;
+    }
+    @keyframes drift{
+      0%{transform:translate3d(0,0,0) rotate(-10deg)}
+      100%{transform:translate3d(-60px, -60px, 0) rotate(-10deg)}
+    }
+    .orb{
+      position:absolute; width:520px; height:520px; border-radius:50%;
+      filter: blur(60px);
+      opacity:.55;
+    }
+    .orb1{background:rgba(73,166,255,.6); top:-180px; left:-200px; animation: float1 8s ease-in-out infinite}
+    .orb2{background:rgba(63,255,216,.55); bottom:-220px; right:-220px; animation: float2 10s ease-in-out infinite}
+    @keyframes float1{50%{transform:translate(40px, 30px)}}
+    @keyframes float2{50%{transform:translate(-40px, -30px)}}
+
+    .wrap{
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 18px 14px 40px;
+    }
+
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:6px;
+      margin-bottom:12px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+    }
+    .logo{
+      width:44px; height:44px;
+      border-radius:14px;
+      display:grid; place-items:center;
+      font-weight:900;
+      color:#021018;
+      background: linear-gradient(135deg, var(--aqua), var(--blue));
+      box-shadow: 0 10px 30px rgba(63,255,216,.18);
+      flex:0 0 auto;
+    }
+    .btxt h1{margin:0; font-size:18px; letter-spacing:.3px}
+    .btxt p{margin:2px 0 0; color:var(--muted); font-size:12px}
+
+    .logout{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:800;
+      letter-spacing:.3px;
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      padding: 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(600px 200px at 30% 0%, rgba(63,255,216,.18), transparent 50%),
+        radial-gradient(500px 220px at 80% 20%, rgba(73,166,255,.18), transparent 55%);
+      pointer-events:none;
+    }
+
+    .emailRow{
+      position:relative;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 12px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(5, 8, 16, .35);
+      margin-bottom:12px;
+    }
+    .emailLeft{
+      min-width:0;
+    }
+    .emailLabel{color:var(--muted); font-size:12px; margin-bottom:2px}
+    .emailValue{
+      font-weight:900;
+      letter-spacing:.2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .gridBtns{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    .btn{
+      width:100%;
+      text-align:left;
+      padding:14px 14px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      font-weight:900;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .btn span{color:var(--muted); font-weight:700; font-size:12px}
+    .arrow{
+      width:38px; height:38px;
+      border-radius:14px;
+      display:grid; place-items:center;
+      background: linear-gradient(135deg, rgba(63,255,216,.85), rgba(73,166,255,.75));
+      color:#021018;
+      flex:0 0 auto;
+      font-weight:900;
+    }
+
+    @media (min-width:520px){
+      .gridBtns{grid-template-columns: 1fr 1fr;}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg">
+    <div class="grid"></div>
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo">PG</div>
+        <div class="btxt">
+          <h1>Phone Guard</h1>
+          <p>Dashboard • Services</p>
+        </div>
+      </div>
+      <button class="logout" id="logoutBtn">Logout</button>
+    </div>
+
+    <div class="card">
+      <div class="emailRow">
+        <div class="emailLeft">
+          <div class="emailLabel">Logged in as</div>
+          <div class="emailValue" id="userEmail">Loading…</div>
+        </div>
+      </div>
+
+      <div class="gridBtns" id="serviceGrid"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+    // ✅ তোমার Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBud-tsFoCGWG8S5Qj5cnhImZwGfwn0b5g",
+      authDomain: "phone-guard-c2a6c.firebaseapp.com",
+      projectId: "phone-guard-c2a6c",
+      storageBucket: "phone-guard-c2a6c.firebasestorage.app",
+      messagingSenderId: "652581603569",
+      appId: "1:652581603569:web:c3912ce05e36ad65bc8150"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const SERVICES = [
+      { key:"mobile",    label:"Mobile Service",    hint:"Open service page" },
+      { key:"facebook",  label:"Facebook Service",  hint:"Open service page" },
+      { key:"whatsapp",  label:"Whatsapp Service",  hint:"Open service page" },
+      { key:"imo",       label:"Imo Service",       hint:"Open service page" },
+      { key:"tiktok",    label:"Tik Tok Service",   hint:"Open service page" },
+      { key:"gmail",     label:"Gmail Service",     hint:"Open service page" },
+      { key:"instagram", label:"Instagram Service", hint:"Open service page" },
+      { key:"location",  label:"Location Service",  hint:"Open service page" },
+      { key:"snapchat",  label:"Snapchat Service",  hint:"Open service page" },
+      { key:"linkedin",  label:"LinkedIn Service",  hint:"Open service page" },
+    ];
+
+    const emailEl = document.getElementById("userEmail");
+    const grid = document.getElementById("serviceGrid");
+
+    // Render buttons
+    grid.innerHTML = SERVICES.map(s => `
+      <button class="btn" data-key="${s.key}">
+        <div>
+          ${s.label}<br/>
+          <span>${s.hint}</span>
+        </div>
+        <div class="arrow">→</div>
+      </button>
+    `).join("");
+
+    // Button click -> next page (service.html)
+    grid.addEventListener("click", (e)=>{
+      const btn = e.target.closest(".btn");
+      if(!btn) return;
+      const key = btn.dataset.key;
+      window.location.href = `service.html?service=${encodeURIComponent(key)}`;
+    });
+
+    // Logout
+    document.getElementById("logoutBtn").addEventListener("click", async ()=>{
+      await signOut(auth);
+      window.location.href = "index.html";
+    });
+
+    // Must be logged in
+    onAuthStateChanged(auth, (user)=>{
+      if(!user){
+        window.location.href = "index.html";
+        return;
+      }
+      emailEl.textContent = user.email || "Unknown";
+    });
+  </script>
+</body>
+</html>
