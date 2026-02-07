@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Mobile • Phone Guard</title>
+  <style>
+    :root{
+      --bg:#040612;
+
+      /* 3000-year futuristic palette */
+      --neon:#00ffa0;
+      --neon2:#00d4ff;
+      --violet:#b06cff;
+      --amber:#ffcc66;
+
+      --text:#e9fff7;
+      --muted:#93cdbb;
+
+      /* glass */
+      --card: rgba(8, 12, 22, .55);
+      --stroke: rgba(0,255,160,.22);
+
+      --shadow:
+        0 0 60px rgba(0,255,160,.14),
+        0 0 90px rgba(0,212,255,.08),
+        inset 0 0 80px rgba(0,40,20,.26);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh; padding:18px 14px 40px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+      color:var(--text);
+
+      background:
+        radial-gradient(900px 600px at 20% -10%, rgba(0,255,160,.22), transparent 55%),
+        radial-gradient(750px 520px at 120% 20%, rgba(0,212,255,.20), transparent 55%),
+        radial-gradient(800px 560px at 50% 120%, rgba(176,108,255,.12), transparent 58%),
+        radial-gradient(900px 560px at 0% 120%, rgba(255,204,102,.06), transparent 58%),
+        var(--bg);
+
+      overflow-x:hidden;
+    }
+
+    /* ====== 3000-year FX ====== */
+    .bgfx{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;}
+    .grid{
+      position:absolute; inset:-30%;
+      background:
+        linear-gradient(to right, rgba(0,212,255,.10) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,255,160,.08) 1px, transparent 1px);
+      background-size: 66px 66px;
+      transform: rotate(-10deg);
+      opacity:.45;
+      filter: blur(.15px);
+      animation: drift 11s linear infinite;
+    }
+    @keyframes drift{
+      0%{transform:translate3d(0,0,0) rotate(-10deg)}
+      100%{transform:translate3d(-66px, -66px, 0) rotate(-10deg)}
+    }
+
+    .orb{
+      position:absolute; width:560px; height:560px; border-radius:50%;
+      filter: blur(75px); opacity:.55;
+    }
+    .orb1{background:rgba(0,212,255,.60); top:-220px; left:-240px; animation: float1 9s ease-in-out infinite}
+    .orb2{background:rgba(0,255,160,.55); bottom:-260px; right:-260px; animation: float2 11s ease-in-out infinite}
+    .orb3{background:rgba(176,108,255,.45); top:42%; left:-300px; animation: float3 13s ease-in-out infinite}
+    @keyframes float1{50%{transform:translate(50px, 40px)}}
+    @keyframes float2{50%{transform:translate(-55px, -40px)}}
+    @keyframes float3{50%{transform:translate(70px, -30px)}}
+
+    .scan{
+      position:fixed; inset:0; pointer-events:none; z-index:1;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(0,255,160,.06) 0px,
+        rgba(0,255,160,.06) 1px,
+        transparent 2px,
+        transparent 8px
+      );
+      mix-blend-mode: screen;
+      animation:flicker 3.2s linear infinite;
+      opacity:.18;
+    }
+    @keyframes flicker{50%{opacity:.12}}
+
+    .wrap{max-width:560px;margin:0 auto; position:relative; z-index:2}
+
+    .top{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom:12px;
+    }
+    .brand{display:flex; align-items:center; gap:10px}
+    .logo{
+      width:46px;height:46px;border-radius:16px;display:grid;place-items:center;font-weight:900;
+      color:#021018;
+      background: linear-gradient(135deg, rgba(0,255,160,.95), rgba(0,212,255,.88), rgba(176,108,255,.75));
+      box-shadow: 0 12px 40px rgba(0,255,160,.22);
+      position:relative; overflow:hidden;
+    }
+    .logo:after{
+      content:"";
+      position:absolute; inset:-50%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,.45), transparent);
+      transform: rotate(25deg);
+      animation: shine 2.8s ease-in-out infinite;
+      opacity:.55;
+      pointer-events:none;
+    }
+    @keyframes shine{
+      0%{transform:translateX(-60%) rotate(25deg)}
+      55%{transform:translateX(10%) rotate(25deg)}
+      100%{transform:translateX(160%) rotate(25deg)}
+    }
+
+    .btxt h1{
+      margin:0;font-size:18px;letter-spacing:.22em;color:var(--neon);
+      text-shadow:0 0 18px rgba(0,255,160,.35), 0 0 22px rgba(0,212,255,.18);
+    }
+    .btxt p{margin:2px 0 0;color:var(--muted);font-size:12px}
+
+    .pill{
+      border:1px solid rgba(0,255,160,.22);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      padding:10px 12px;border-radius:14px;
+      font-weight:900;letter-spacing:.08em;
+      cursor:pointer;
+      box-shadow: 0 0 0 rgba(0,255,160,0);
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .pill:hover{border-color:rgba(0,255,160,.38); box-shadow:0 0 26px rgba(0,255,160,.12)}
+    .pill:active{transform:translateY(1px)}
+
+    .card{
+      border:1px solid var(--stroke);
+      border-radius:24px;
+      background:var(--card);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(16px);
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card:before{
+      content:"";
+      position:absolute; inset:-2px; pointer-events:none;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(0,212,255,.16), transparent 45%),
+        radial-gradient(circle at 82% 24%, rgba(0,255,160,.14), transparent 42%),
+        radial-gradient(circle at 60% 112%, rgba(176,108,255,.10), transparent 55%),
+        linear-gradient(180deg, transparent, rgba(0,255,160,.05));
+    }
+    .title{
+      font-weight:900; letter-spacing:.14em; color:var(--neon); margin:0; font-size:16px;
+      text-shadow:0 0 18px rgba(0,255,160,.25);
+    }
+    .sub{margin:6px 0 0;color:var(--neon2);font-size:12px;opacity:.9}
+    .hr{height:1px;background:rgba(0,255,160,.14);margin:14px 0}
+
+    label{display:block;font-size:12px;color:#9fffdc;margin:0 0 6px 2px;opacity:.95}
+    select,input{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(0,255,160,.22);
+      background:rgba(0,0,0,.35);
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    select:focus,input:focus{
+      border-color:rgba(0,255,160,.75);
+      box-shadow:0 0 0 3px rgba(0,255,160,.12), 0 0 26px rgba(0,212,255,.08);
+    }
+
+    .hint{font-size:11px;color:var(--muted);margin-top:6px;opacity:.95}
+
+    .btn{
+      width:100%;
+      margin-top:12px;
+      padding:12px 14px;
+      border:0;
+      border-radius:18px;
+      cursor:pointer;
+      font-weight:900;
+      letter-spacing:.12em;
+      background:linear-gradient(135deg, rgba(0,212,255,.92), rgba(0,255,160,.96), rgba(176,108,255,.72));
+      color:#00150b;
+      position:relative; overflow:hidden;
+      box-shadow: 0 14px 38px rgba(0,255,160,.14);
+      transition: transform .15s ease, filter .15s ease;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .btn:before{
+      content:"";
+      position:absolute; inset:-60%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,.38), transparent);
+      transform: rotate(20deg);
+      animation: btnshine 3.6s ease-in-out infinite;
+      opacity:.45;
+      pointer-events:none;
+    }
+    @keyframes btnshine{
+      0%{transform:translateX(-70%) rotate(20deg)}
+      55%{transform:translateX(5%) rotate(20deg)}
+      100%{transform:translateX(170%) rotate(20deg)}
+    }
+
+    .msg{margin-top:10px;min-height:18px;font-size:12px;color:#b7ffd9;opacity:.95}
+    .err{color:#ff6b84}
+
+    .links{display:flex;gap:10px;margin-top:14px}
+    .link{
+      flex:1;text-align:center;padding:11px 12px;border-radius:14px;
+      border:1px solid rgba(0,255,160,.22);color:var(--neon);text-decoration:none;
+      background:transparent;font-weight:900;
+      transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+    }
+    .link:hover{border-color:rgba(0,255,160,.38); box-shadow:0 0 26px rgba(0,255,160,.10)}
+    .link:active{transform:translateY(1px)}
+
+    /* --- Overlay animation --- */
+    .overlay{
+      position:fixed; inset:0; z-index:50;
+      display:none;
+      background: rgba(0,0,0,.58);
+      backdrop-filter: blur(12px);
+      padding:16px;
+    }
+    .overlay.show{display:block}
+    .panel{
+      max-width:720px; margin:0 auto;
+      border:1px solid rgba(0,255,160,.22);
+      background: rgba(8,12,22,.78);
+      border-radius:24px;
+      box-shadow: 0 0 80px rgba(0,255,160,.14);
+      overflow:hidden;
+      position:relative;
+    }
+    .panel:before{
+      content:"";
+      position:absolute; inset:-2px; pointer-events:none;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(0,212,255,.16), transparent 45%),
+        radial-gradient(circle at 80% 30%, rgba(0,255,160,.14), transparent 42%),
+        radial-gradient(circle at 50% 120%, rgba(176,108,255,.10), transparent 55%);
+    }
+    .panelHead{
+      padding:14px 16px;
+      display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid rgba(0,255,160,.14);
+    }
+    .panelHead b{color:var(--neon); letter-spacing:.14em; text-shadow:0 0 14px rgba(0,255,160,.22)}
+    .timer{color:#9fffdc; font-size:12px}
+    .term{
+      height:min(56vh, 420px);
+      overflow:auto;
+      padding:14px 16px;
+      font-size:12px;
+      line-height:1.55;
+      color:#c9ffe8;
+      background: rgba(0,0,0,.34);
+    }
+    .line{opacity:.95}
+    .bar{
+      height:10px; border-radius:999px;
+      border:1px solid rgba(0,255,160,.22);
+      background: rgba(0,0,0,.35);
+      margin:14px 16px 16px;
+      overflow:hidden;
+    }
+    .fill{
+      height:100%; width:0%;
+      background: linear-gradient(90deg, rgba(0,212,255,.70), rgba(0,255,160,.98), rgba(176,108,255,.62));
+      transition: width .25s linear;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bgfx">
+    <div class="grid"></div>
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+  <div class="scan"></div>
+
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo">PG</div>
+        <div class="btxt">
+          <h1>PHONE GUARD</h1>
+          <p>Mobile Service • Glass Panel</p>
+        </div>
+      </div>
+      <button class="pill" type="button" onclick="location.href='home.html'">HOME</button>
+    </div>
+
+    <div class="card">
+      <p class="title">Whatsapp Hack</p>
+      <p class="sub">Select country code, enter number, enter code</p>
+      <div class="hr"></div>
+
+      <div class="row">
+        <label>Country code</label>
+        <select id="cc">
+          <option value="+880">Bangladesh (+880)</option>
+          <option value="+966">Saudi Arabia (+966)</option>
+          <option value="+971">United Arab Emirates (+971)</option>
+          <option value="+60">Malaysia (+60)</option>
+          <option value="+974">Qatar (+974)</option>
+          <option value="+965">Kuwait (+965)</option>
+          <option value="+962">Jordan (+962)</option>
+          <option value="+968">Oman (+968)</option>
+          <option value="+63">Philippines (+63)</option>
+          <option value="+91">India (+91)</option>
+          <option value="+92">Pakistan (+92)</option>
+          <option value="+62">Indonesia (+62)</option>
+          <option value="+977">Nepal (+977)</option>
+          <option value="+84">Vietnam (+84)</option>
+          <option value="+39">Italy (+39)</option>
+          <option value="+33">France (+33)</option>
+          <option value="+44">UK (+44)</option>
+          <option value="+1">USA (+1)</option>
+        </select>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <label>Number</label>
+        <input id="phone" inputmode="tel" placeholder="1XXXXXXXXX" />
+        <div class="hint">Only numbers</div>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <label>Code</label>
+        <input id="code" inputmode="numeric" placeholder="Enter code" />
+        <div class="hint">Code required to continue</div>
+      </div>
+
+      <button class="btn" id="mobileBtn" type="button">MOBILE SERVICE</button>
+      <div class="msg" id="msg"></div>
+
+      <div class="links">
+        <a class="link" href="home.html">← HOME</a>
+        <a class="link" href="mobile.html">RELOAD</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="panel">
+      <div class="panelHead">
+        <b>INITIALIZING SESSION</b>
+        <div class="timer" id="timer">30s</div>
+      </div>
+      <div class="term" id="term"></div>
+      <div class="bar"><div class="fill" id="fill"></div></div>
+    </div>
+  </div>
+
+  <script>
+    const REQUIRED_CODE = "998127365488";
+
+    const cc = document.getElementById("cc");
+    const phone = document.getElementById("phone");
+    const code = document.getElementById("code");
+    const msg = document.getElementById("msg");
+    const btn = document.getElementById("mobileBtn");
+
+    const overlay = document.getElementById("overlay");
+    const term = document.getElementById("term");
+    const timerEl = document.getElementById("timer");
+    const fill = document.getElementById("fill");
+
+    const warnText =
+"আগে এডমিন থেকে কোড সংগ্রহ করুন। ভুল কোড দিয়ে বার বার চেষ্টা করলে আপনার ফোনের সমস্যা হতে পারে। এডমিন এর নাম্বার হোয়াটসঅ্যাপ +8801978318276";
+
+    function setErr(t){ msg.textContent = t; msg.className = "msg err"; }
+    function setOk(t){ msg.textContent = t; msg.className = "msg"; }
+    function cleanPhone(v){ return String(v||"").replace(/[^\d]/g,""); }
+
+    const LINES = [
+      "boot: initializing secure UI modules...",
+      "net: checking transport layer...",
+      "crypto: generating ephemeral keys...",
+      "auth: validating session tokens...",
+      "ui: preparing access workflow...",
+      "sync: creating request packet...",
+      "scan: verifying device parameters...",
+      "core: loading interface components...",
+      "ok: pipeline stable — awaiting redirect..."
+    ];
+
+    function addLine(text){
+      const div = document.createElement("div");
+      div.className = "line";
+      div.textContent = "> " + text;
+      term.appendChild(div);
+      term.scrollTop = term.scrollHeight;
+    }
+
+    function start30sAnimation(nextUrl){
+      overlay.classList.add("show");
+      term.innerHTML = "";
+      let seconds = 30;
+      let tick = 0;
+
+      addLine("session: start");
+      addLine("target: access.html");
+      addLine("status: running 30s sequence...");
+
+      const intv = setInterval(()=>{
+        tick++;
+        const progress = Math.min(100, (tick / 30) * 100);
+        fill.style.width = progress + "%";
+
+        if(tick % 3 === 0){
+          const pick = LINES[(tick/3 - 1) % LINES.length];
+          addLine(pick);
+        }
+
+        seconds--;
+        timerEl.textContent = seconds + "s";
+
+        if(seconds <= 0){
+          clearInterval(intv);
+          fill.style.width = "100%";
+          addLine("redirect: complete ✅");
+          setTimeout(()=> location.href = nextUrl, 400);
+        }
+      }, 1000);
+    }
+
+    btn.addEventListener("click", ()=>{
+      const ph = cleanPhone(phone.value);
+      if(ph.length < 6) return setErr("Valid number দাও");
+
+      const entered = String(code.value || "").trim();
+      if(entered !== REQUIRED_CODE) return setErr(warnText);
+
+      setOk("Code OK ✅ Starting...");
+      const full = encodeURIComponent(cc.value + ph);
+      const next = "access.html?phone=" + full;
+      start30sAnimation(next);
+    });
+
+    setOk("সব তথ্য দিয়ে Mobile Service চাপো।");
+  </script>
+</body>
+</html>
