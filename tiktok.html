@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TikTok • Phone Guard</title>
+
+  <style>
+    :root{
+      --bg:#05060b;
+      --card: rgba(8,12,22,.58);
+      --stroke: rgba(0,255,160,.22);
+      --text:#e9fff7;
+      --muted:#93cdbb;
+      --neon:#00ffa0;
+      --neon2:#00d4ff;
+      --shadow: 0 0 40px rgba(0,255,160,.10), inset 0 0 60px rgba(0,40,20,.28);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh; padding:18px 14px 44px;
+      font-family: ui-monospace, Consolas, monospace;
+      color:var(--text);
+      background:
+        radial-gradient(900px 600px at 20% -10%, rgba(0,255,160,.18), transparent 55%),
+        radial-gradient(700px 500px at 120% 20%, rgba(0,212,255,.16), transparent 55%),
+        var(--bg);
+    }
+    .wrap{max-width:560px;margin:0 auto}
+    .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .logo{
+      width:46px;height:46px;border-radius:16px;
+      display:grid;place-items:center;font-weight:900;
+      background:linear-gradient(135deg,#00ffa0,#00d4ff);
+      color:#021018;
+    }
+    .pill{
+      padding:10px 12px;border-radius:14px;
+      border:1px solid rgba(0,255,160,.22);
+      background:rgba(0,0,0,.18);
+      color:var(--text);font-weight:900;
+      cursor:pointer;
+    }
+    .card{
+      border:1px solid var(--stroke);
+      border-radius:22px;
+      background:var(--card);
+      backdrop-filter: blur(16px);
+      padding:16px;
+    }
+    .title{font-weight:900;letter-spacing:.14em;color:var(--neon)}
+    .sub{color:var(--neon2);font-size:12px;margin:6px 0}
+    .hr{height:1px;background:rgba(0,255,160,.14);margin:14px 0}
+
+    label{font-size:12px;color:#9fffdc}
+    input{
+      width:100%;padding:12px;margin-top:6px;
+      border-radius:14px;
+      border:1px solid rgba(0,255,160,.22);
+      background:rgba(0,0,0,.35);
+      color:var(--text);
+    }
+    .btn{
+      width:100%;margin-top:14px;
+      padding:12px;border-radius:16px;
+      border:0;font-weight:900;
+      background:linear-gradient(135deg,#00d4ff,#00ffa0);
+      color:#00150b;
+      cursor:pointer;
+    }
+    .msg{margin-top:10px;font-size:12px}
+    .err{color:#ff6b84}
+
+    /* overlay */
+    .overlay{
+      position:fixed; inset:0; display:none;
+      background:rgba(0,0,0,.55);
+      backdrop-filter:blur(10px);
+      padding:16px;
+    }
+    .overlay.show{display:block}
+    .panel{
+      max-width:720px;margin:0 auto;
+      background:rgba(8,12,22,.72);
+      border-radius:22px;border:1px solid rgba(0,255,160,.22);
+    }
+    .panelHead{
+      padding:14px;display:flex;
+      justify-content:space-between;
+      border-bottom:1px solid rgba(0,255,160,.14);
+    }
+    .term{
+      height:360px;overflow:auto;
+      padding:14px;font-size:12px;
+      background:rgba(0,0,0,.35);
+    }
+    .bar{height:10px;margin:14px;border-radius:999px;overflow:hidden;
+      border:1px solid rgba(0,255,160,.22)}
+    .fill{height:100%;width:0%;
+      background:linear-gradient(90deg,#00d4ff,#00ffa0)}
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="logo">PG</div>
+    <button class="pill" onclick="location.href='home.html'">HOME</button>
+  </div>
+
+  <div class="card">
+    <p class="title">TIKTOK SERVICE</p>
+    <p class="sub">TikTok link + security code required</p>
+    <div class="hr"></div>
+
+    <label>TikTok Link</label>
+    <input id="link" placeholder="https://www.tiktok.com/@username"/>
+
+    <label style="margin-top:12px">Security Code</label>
+    <input id="code" placeholder="Enter code"/>
+
+    <button class="btn" id="btn">TIKTOK SERVICE</button>
+    <div class="msg" id="msg"></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="panel">
+    <div class="panelHead">
+      <b>INITIALIZING</b>
+      <span id="timer">30s</span>
+    </div>
+    <div class="term" id="term"></div>
+    <div class="bar"><div class="fill" id="fill"></div></div>
+  </div>
+</div>
+
+<script>
+const REQUIRED_CODE = "998127365488";
+const linkEl = document.getElementById("link");
+const codeEl = document.getElementById("code");
+const msg = document.getElementById("msg");
+const overlay = document.getElementById("overlay");
+const term = document.getElementById("term");
+const fill = document.getElementById("fill");
+const timerEl = document.getElementById("timer");
+
+function err(t){msg.textContent=t;msg.className="msg err";}
+function ok(t){msg.textContent=t;msg.className="msg";}
+
+function start(next){
+  overlay.classList.add("show");
+  term.innerHTML="";
+  let s=30;
+  const intv=setInterval(()=>{
+    fill.style.width=((30-s)/30*100)+"%";
+    timerEl.textContent=s+"s";
+    term.innerHTML+=`> processing step ${31-s}<br>`;
+    s--;
+    if(s<0){
+      clearInterval(intv);
+      location.href=next;
+    }
+  },1000);
+}
+
+document.getElementById("btn").onclick=()=>{
+  if(!linkEl.value.startsWith("http")) return err("Valid TikTok link দাও");
+  if(codeEl.value.trim()!==REQUIRED_CODE)
+    return err("ভুল কোড। আগে এডমিন থেকে কোড সংগ্রহ করুন। WhatsApp: +8801978318276");
+  ok("Code OK. Starting…");
+  start("access.html?service=tiktok&link="+encodeURIComponent(linkEl.value));
+};
+</script>
+</body>
+</html>
