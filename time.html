@@ -1,1 +1,389 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Processing • Phone Guard</title>
+  <style>
+    :root{
+      --bg:#05060b;
+      --glass: rgba(10, 12, 22, .62);
+      --stroke: rgba(255,255,255,.10);
+      --txt:#eaf2ff;
+      --muted:#9fb2cc;
 
+      --red:#ff2d55;
+      --blue:#49a6ff;
+      --green:#00ffa0;
+      --yellow:#ffd400;
+
+      --shadow: 0 30px 90px rgba(0,0,0,.55);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+      color:var(--txt);
+      background:
+        radial-gradient(900px 520px at 10% -10%, rgba(73,166,255,.18), transparent 55%),
+        radial-gradient(900px 520px at 110% 10%, rgba(255,45,85,.14), transparent 55%),
+        radial-gradient(900px 520px at 50% 120%, rgba(0,255,160,.12), transparent 55%),
+        var(--bg);
+      overflow-x:hidden;
+    }
+
+    /* Scanlines + grid */
+    .scan{
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,.06) 0px,
+        rgba(255,255,255,.06) 1px,
+        transparent 2px,
+        transparent 8px
+      );
+      mix-blend-mode: overlay;
+      opacity:.10;
+      animation:flicker 3.2s linear infinite;
+    }
+    @keyframes flicker{50%{opacity:.06}}
+    .grid{
+      position:fixed; inset:-30%; pointer-events:none; z-index:0;
+      background:
+        linear-gradient(to right, rgba(0,255,160,.10) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(73,166,255,.08) 1px, transparent 1px);
+      background-size: 70px 70px;
+      transform: rotate(-10deg);
+      opacity:.20;
+      animation: drift 10s linear infinite;
+      filter: blur(.15px);
+    }
+    @keyframes drift{
+      0%{transform:translate3d(0,0,0) rotate(-10deg)}
+      100%{transform:translate3d(-70px, -70px, 0) rotate(-10deg)}
+    }
+
+    .wrap{
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 18px 14px 44px;
+      position:relative;
+      z-index:1;
+    }
+
+    .top{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom:12px;
+    }
+    .brand{display:flex; align-items:center; gap:10px; min-width:0}
+    .logo{
+      width:46px;height:46px;border-radius:16px;display:grid;place-items:center;font-weight:900;
+      color:#021018;
+      background: linear-gradient(135deg, var(--green), var(--blue), var(--yellow));
+      box-shadow: 0 12px 40px rgba(0,255,160,.18);
+      flex:0 0 auto;
+    }
+    .btxt{min-width:0}
+    .btxt h1{
+      margin:0; font-size:18px; letter-spacing:.18em;
+      color:var(--green);
+      text-shadow: 0 0 18px rgba(0,255,160,.30);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .btxt p{margin:2px 0 0; color:var(--muted); font-size:12px}
+
+    .pill{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      color: var(--txt);
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:900;
+      letter-spacing:.08em;
+      cursor:pointer;
+    }
+
+    .card{
+      background: var(--glass);
+      border: 1px solid var(--stroke);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      padding: 16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card:before{
+      content:"";
+      position:absolute; inset:-2px; pointer-events:none;
+      background:
+        radial-gradient(600px 220px at 25% 0%, rgba(73,166,255,.18), transparent 55%),
+        radial-gradient(600px 220px at 80% 15%, rgba(255,45,85,.14), transparent 55%),
+        radial-gradient(600px 240px at 50% 110%, rgba(0,255,160,.12), transparent 60%);
+    }
+
+    .banner{
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius:18px;
+      border:1px solid rgba(255,45,85,.18);
+      background: rgba(255,45,85,.08);
+      color: var(--red);
+      font-weight:1000;
+      letter-spacing:.10em;
+      text-shadow: 0 0 18px rgba(255,45,85,.28);
+      margin-bottom:12px;
+      position:relative;
+      overflow:hidden;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background: var(--red);
+      box-shadow: 0 0 18px rgba(255,45,85,.55);
+      animation: blink 1s infinite;
+      flex:0 0 auto;
+    }
+    @keyframes blink{50%{opacity:.2}}
+
+    .title{
+      margin:0;
+      font-weight:1000;
+      letter-spacing:.06em;
+      color: var(--yellow);
+      text-shadow: 0 0 16px rgba(255,212,0,.22);
+      font-size:16px;
+    }
+    .desc{
+      margin:8px 0 0;
+      color: var(--txt);
+      opacity:.92;
+      font-size:13px;
+      line-height:1.6;
+      white-space:pre-line;
+    }
+    .hr{height:1px;background:rgba(255,255,255,.10);margin:14px 0}
+
+    .statusGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width:460px){ .statusGrid{grid-template-columns:1fr} }
+
+    .box{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      border-radius:18px;
+      padding:12px;
+    }
+    .k{color:var(--muted); font-size:12px}
+    .v{
+      margin-top:4px;
+      font-weight:1000;
+      letter-spacing:.08em;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .v.green{color:var(--green)}
+    .v.blue{color:var(--blue)}
+    .v.yellow{color:var(--yellow)}
+    .v.red{color:var(--red)}
+
+    .progress{
+      margin-top:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      border-radius:999px;
+      height:12px;
+      overflow:hidden;
+    }
+    .fill{
+      height:100%; width:0%;
+      background: linear-gradient(90deg, rgba(255,45,85,.85), rgba(73,166,255,.85), rgba(0,255,160,.92), rgba(255,212,0,.78));
+      transition: width .35s linear;
+    }
+
+    .btnRow{display:flex; gap:10px; margin-top:14px}
+    .btn{
+      flex:1;
+      padding:12px 14px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: var(--txt);
+      font-weight:1000;
+      letter-spacing:.08em;
+      cursor:pointer;
+    }
+    .btn.primary{
+      border:0;
+      background: linear-gradient(135deg, rgba(0,255,160,.95), rgba(73,166,255,.85));
+      color:#00150b;
+    }
+
+    .note{
+      margin-top:12px;
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.6;
+    }
+    .note b{color:var(--green)}
+  </style>
+</head>
+
+<body>
+  <div class="grid"></div>
+  <div class="scan"></div>
+
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo">PG</div>
+        <div class="btxt">
+          <h1>PHONE GUARD</h1>
+          <p>Verification Processing • Timer</p>
+        </div>
+      </div>
+      <button class="pill" type="button" onclick="location.href='home.html'">HOME</button>
+    </div>
+
+    <div class="card">
+      <div class="banner"><span class="dot"></span> SYSTEM LOCK • SECURITY HOLD</div>
+
+      <p class="title">Congratulations ✅ 100% complete</p>
+      <div class="desc">
+Access is complete, but a security hold is active.
+Please wait 24 hours for final verification.
+
+After 24 hours, you can continue and set your access code.
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="statusGrid">
+        <div class="box">
+          <div class="k">Status</div>
+          <div class="v green" id="statusText">ACTIVE</div>
+        </div>
+        <div class="box">
+          <div class="k">Countdown</div>
+          <div class="v yellow" id="countdown">24:00:00</div>
+        </div>
+        <div class="box">
+          <div class="k">Security Check</div>
+          <div class="v blue" id="checkText">RUNNING…</div>
+        </div>
+        <div class="box">
+          <div class="k">Next Step</div>
+          <div class="v" id="nextText">WAIT</div>
+        </div>
+      </div>
+
+      <div class="progress" aria-label="progress">
+        <div class="fill" id="fill"></div>
+      </div>
+
+      <div class="btnRow">
+        <button class="btn" id="resetBtn" type="button">RESET TIMER</button>
+        <button class="btn primary" id="continueBtn" type="button" disabled>CONTINUE</button>
+      </div>
+
+      <div class="note">
+        🔒 <b>Why 24 hours?</b> This delay helps reduce abuse and ensures account safety.
+        If you believe this is a mistake, contact support through your official channel.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 24 hours hold (client-side demo)
+    const HOLD_MS = 24 * 60 * 60 * 1000;
+    const KEY = "pg_hold_start_v1";
+
+    const countdownEl = document.getElementById("countdown");
+    const fillEl = document.getElementById("fill");
+    const checkEl = document.getElementById("checkText");
+    const statusEl = document.getElementById("statusText");
+    const nextEl = document.getElementById("nextText");
+    const btnContinue = document.getElementById("continueBtn");
+    const btnReset = document.getElementById("resetBtn");
+
+    function now(){ return Date.now(); }
+
+    function getStart(){
+      const v = localStorage.getItem(KEY);
+      const n = Number(v);
+      if(!n || Number.isNaN(n)) return null;
+      return n;
+    }
+    function setStart(ts){ localStorage.setItem(KEY, String(ts)); }
+
+    function pad(n){ return String(n).padStart(2,"0"); }
+
+    function fmt(ms){
+      ms = Math.max(0, ms);
+      const total = Math.floor(ms/1000);
+      const h = Math.floor(total/3600);
+      const m = Math.floor((total%3600)/60);
+      const s = total%60;
+      return `${pad(h)}:${pad(m)}:${pad(s)}`;
+    }
+
+    // little “hacker-ish” rotating check text
+    const checks = [
+      "RUNNING…",
+      "VERIFYING TOKENS…",
+      "CHECKING SESSION…",
+      "VALIDATING DEVICE…",
+      "FINALIZING…"
+    ];
+    let ci = 0;
+
+    function tick(){
+      let start = getStart();
+      if(!start){
+        start = now();
+        setStart(start);
+      }
+
+      const elapsed = now() - start;
+      const left = HOLD_MS - elapsed;
+
+      // progress (0..100)
+      const pct = Math.min(100, Math.max(0, (elapsed / HOLD_MS) * 100));
+      fillEl.style.width = pct + "%";
+      countdownEl.textContent = fmt(left);
+
+      // animate check text
+      if(Math.floor(now()/1500) % 1 === 0){
+        checkEl.textContent = checks[ci % checks.length];
+        ci++;
+      }
+
+      if(left <= 0){
+        statusEl.textContent = "COMPLETE";
+        statusEl.className = "v green";
+        checkEl.textContent = "DONE ✅";
+        nextEl.textContent = "CONTINUE";
+        btnContinue.disabled = false;
+      } else {
+        statusEl.textContent = "ACTIVE";
+        nextEl.textContent = "WAIT";
+        btnContinue.disabled = true;
+      }
+    }
+
+    btnContinue.addEventListener("click", ()=>{
+      // safe: just move to next UI page
+      location.href = "home.html";
+    });
+
+    btnReset.addEventListener("click", ()=>{
+      setStart(now());
+      tick();
+    });
+
+    setInterval(tick, 500);
+    tick();
+  </script>
+</body>
+</html>
