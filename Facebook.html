@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Facebook • Phone Guard</title>
+  <style>
+    :root{
+      --bg:#05060b;
+      --card: rgba(8,12,22,.58);
+      --stroke: rgba(0,255,160,.22);
+      --text:#e9fff7;
+      --muted:#93cdbb;
+      --neon:#00ffa0;
+      --neon2:#00d4ff;
+      --violet:#b06cff;
+      --shadow: 0 0 40px rgba(0,255,160,.10), inset 0 0 60px rgba(0,40,20,.28);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh; padding:18px 14px 44px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+      color:var(--text);
+      background:
+        radial-gradient(900px 600px at 20% -10%, rgba(0,255,160,.18), transparent 55%),
+        radial-gradient(700px 500px at 120% 20%, rgba(0,212,255,.16), transparent 55%),
+        radial-gradient(760px 540px at 50% 120%, rgba(176,108,255,.12), transparent 58%),
+        var(--bg);
+      overflow-x:hidden;
+    }
+    .scan{
+      position:fixed; inset:0; pointer-events:none; opacity:.18;
+      background: repeating-linear-gradient(to bottom, rgba(0,255,160,.06) 0px, rgba(0,255,160,.06) 1px, transparent 2px, transparent 8px);
+      mix-blend-mode: screen;
+      animation:flicker 3.4s linear infinite;
+    }
+    @keyframes flicker{50%{opacity:.11}}
+    .wrap{max-width:560px;margin:0 auto; position:relative}
+    .top{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom:12px;
+    }
+    .brand{display:flex; align-items:center; gap:10px; min-width:0}
+    .logo{
+      width:46px;height:46px;border-radius:16px;display:grid;place-items:center;font-weight:900;
+      color:#021018;
+      background: linear-gradient(135deg, rgba(0,255,160,.95), rgba(0,212,255,.85), rgba(176,108,255,.70));
+      box-shadow: 0 12px 40px rgba(0,255,160,.18);
+      flex:0 0 auto;
+    }
+    .btxt h1{margin:0;font-size:18px;letter-spacing:.22em;color:var(--neon);text-shadow:0 0 18px rgba(0,255,160,.35)}
+    .btxt p{margin:2px 0 0;color:var(--muted);font-size:12px}
+    .pill{
+      border:1px solid rgba(0,255,160,.22);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      padding:10px 12px;border-radius:14px;
+      font-weight:900;letter-spacing:.08em;
+      cursor:pointer;
+    }
+    .card{
+      border:1px solid var(--stroke);
+      border-radius:22px;
+      background:var(--card);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(16px);
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card:before{
+      content:"";
+      position:absolute; inset:-2px; pointer-events:none;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(0,212,255,.14), transparent 45%),
+        radial-gradient(circle at 80% 30%, rgba(0,255,160,.12), transparent 40%),
+        radial-gradient(circle at 50% 120%, rgba(176,108,255,.10), transparent 55%),
+        linear-gradient(180deg, transparent, rgba(0,255,160,.05));
+    }
+    .title{font-weight:1000; letter-spacing:.14em; color:var(--neon); margin:0; font-size:16px}
+    .sub{margin:6px 0 0;color:var(--neon2);font-size:12px;opacity:.9}
+    .hr{height:1px;background:rgba(0,255,160,.14);margin:14px 0}
+    label{display:block;font-size:12px;color:#9fffdc;margin:0 0 6px 2px;opacity:.95}
+    input{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(0,255,160,.22);
+      background:rgba(0,0,0,.35);
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+    }
+    input:focus{
+      border-color:rgba(0,255,160,.75);
+      box-shadow:0 0 0 3px rgba(0,255,160,.12);
+    }
+    .hint{font-size:11px;color:var(--muted);margin-top:6px;opacity:.95}
+    .btn{
+      width:100%;
+      margin-top:12px;
+      padding:12px 14px;
+      border:0;
+      border-radius:16px;
+      cursor:pointer;
+      font-weight:1000;
+      letter-spacing:.10em;
+      background:linear-gradient(135deg, rgba(0,212,255,.9), rgba(0,255,160,.95), rgba(176,108,255,.70));
+      color:#00150b;
+    }
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .msg{margin-top:10px;min-height:18px;font-size:12px;color:#b7ffd9;opacity:.95;white-space:pre-line}
+    .err{color:#ff6b84}
+    .links{display:flex;gap:10px;margin-top:14px}
+    .link{
+      flex:1;text-align:center;padding:11px 12px;border-radius:14px;
+      border:1px solid rgba(0,255,160,.22);color:var(--neon);text-decoration:none;
+      background:transparent;font-weight:1000;
+    }
+
+    /* overlay */
+    .overlay{
+      position:fixed; inset:0; z-index:50;
+      display:none;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(10px);
+      padding:16px;
+    }
+    .overlay.show{display:block}
+    .panel{
+      max-width:720px; margin:0 auto;
+      border:1px solid rgba(0,255,160,.22);
+      background: rgba(8,12,22,.72);
+      border-radius:22px;
+      box-shadow: 0 0 60px rgba(0,255,160,.12);
+      overflow:hidden;
+    }
+    .panelHead{
+      padding:14px 16px;
+      display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid rgba(0,255,160,.14);
+    }
+    .panelHead b{color:var(--neon); letter-spacing:.14em}
+    .timer{color:#9fffdc; font-size:12px}
+    .term{
+      height:min(56vh, 420px);
+      overflow:auto;
+      padding:14px 16px;
+      font-size:12px;
+      line-height:1.5;
+      color:#c9ffe8;
+      background: rgba(0,0,0,.35);
+    }
+    .line{opacity:.95}
+    .bar{
+      height:10px; border-radius:999px;
+      border:1px solid rgba(0,255,160,.22);
+      background: rgba(0,0,0,.35);
+      margin:14px 16px 16px;
+      overflow:hidden;
+    }
+    .fill{
+      height:100%; width:0%;
+      background: linear-gradient(90deg, rgba(0,212,255,.65), rgba(0,255,160,.95), rgba(176,108,255,.60));
+      transition: width .25s linear;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="scan"></div>
+
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo">PG</div>
+        <div class="btxt">
+          <h1>PHONE GUARD</h1>
+          <p>Facebook Service • Glass Panel</p>
+        </div>
+      </div>
+      <button class="pill" type="button" onclick="location.href='home.html'">HOME</button>
+    </div>
+
+    <div class="card">
+      <p class="title">FACEBOOK SERVICE</p>
+      <p class="sub">Paste your Facebook profile/page link</p>
+      <div class="hr"></div>
+
+      <label>Facebook Link</label>
+      <input id="fbLink" inputmode="url" placeholder="https://facebook.com/..." />
+      <div class="hint">Link ছাড়া submit হবে না</div>
+
+      <button class="btn" id="goBtn" type="button">CONTINUE</button>
+      <div class="msg" id="msg">Ready.</div>
+
+      <div class="links">
+        <a class="link" href="home.html">← HOME</a>
+        <a class="link" href="facebook.html">RELOAD</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 30s overlay -->
+  <div class="overlay" id="overlay">
+    <div class="panel">
+      <div class="panelHead">
+        <b>INITIALIZING FACEBOOK SESSION</b>
+        <div class="timer" id="timer">30s</div>
+      </div>
+      <div class="term" id="term"></div>
+      <div class="bar"><div class="fill" id="fill"></div></div>
+    </div>
+  </div>
+
+  <script>
+    const linkEl = document.getElementById("fbLink");
+    const msg = document.getElementById("msg");
+    const btn = document.getElementById("goBtn");
+
+    const overlay = document.getElementById("overlay");
+    const term = document.getElementById("term");
+    const timerEl = document.getElementById("timer");
+    const fill = document.getElementById("fill");
+
+    const setErr = (t)=>{ msg.textContent = t; msg.className = "msg err"; };
+    const setOk  = (t)=>{ msg.textContent = t; msg.className = "msg"; };
+
+    function isValidUrl(u){
+      try { new URL(u); return true; } catch { return false; }
+    }
+
+    const LINES = [
+      "boot: loading FB module…",
+      "net: checking secure tunnel…",
+      "crypto: generating keys…",
+      "scan: validating request…",
+      "queue: preparing admin approval…",
+      "ok: session stable…"
+    ];
+
+    function addLine(text){
+      const div = document.createElement("div");
+      div.className = "line";
+      div.textContent = "> " + text;
+      term.appendChild(div);
+      term.scrollTop = term.scrollHeight;
+    }
+
+    function start30s(nextUrl){
+      overlay.classList.add("show");
+      term.innerHTML = "";
+      let seconds = 30;
+      let tick = 0;
+
+      addLine("session: start");
+      addLine("target: access.html?service=facebook");
+      addLine("status: running 30s sequence…");
+
+      const intv = setInterval(()=>{
+        tick++;
+        const progress = Math.min(100, (tick/30)*100);
+        fill.style.width = progress + "%";
+
+        if(tick % 3 === 0){
+          addLine(LINES[(tick/3 - 1) % LINES.length]);
+        }
+
+        seconds--;
+        timerEl.textContent = seconds + "s";
+
+        if(seconds <= 0){
+          clearInterval(intv);
+          fill.style.width = "100%";
+          addLine("redirect: complete ✅");
+          setTimeout(()=> location.href = nextUrl, 350);
+        }
+      }, 1000);
+    }
+
+    btn.addEventListener("click", ()=>{
+      const link = String(linkEl.value || "").trim();
+      if(!link) return setErr("Facebook link দাও");
+      if(!isValidUrl(link)) return setErr("Valid link দাও (https://...)");
+
+      setOk("Starting…");
+      const next = "access.html?service=facebook&link=" + encodeURIComponent(link);
+      start30s(next);
+    });
+  </script>
+</body>
+</html>
