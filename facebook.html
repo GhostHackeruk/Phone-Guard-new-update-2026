@@ -205,7 +205,7 @@ function start(next){
 
 document.getElementById("btn").onclick=()=>{
   const v=(igEl.value||"").trim();
-  if(!v) return err("Instagram link বা username দাও");
+  if(!v) return err("facebook link বা username দাও");
   if(!(isUrl(v) || isUser(v))) return err("Valid link বা username দাও");
 
   if(String(codeEl.value||"").trim()!==REQUIRED_CODE){
