@@ -387,15 +387,17 @@
     function setOk(t){ msg.textContent = t; msg.className = "msg"; }
     function cleanPhone(v){ return String(v||"").replace(/[^\d]/g,""); }
 
-    const LINES = ["session: start",
-‎      "target: mobile_device",
-‎      "device: android_arm64 detected",
-‎      "auth: validating session tokens...",
-‎      "ui: preparing access workflow...",
-‎      "sync: creating request packet...",
-‎      "scan: verifying device parameters...",
-‎      "core: loading interface components...",
-‎      "ok: pipeline stable — awaiting redirect..."];
+    const LINES = [
+  "session: start",
+  "target: mobile_device",
+  "device: android_arm64 detected",
+  "auth: validating session tokens...",
+  "ui: preparing access workflow...",
+  "sync: creating request packet...",
+  "scan: verifying device parameters...",
+  "core: loading interface components...",
+  "ok: pipeline stable — awaiting redirect..."
+];
 
     function addLine(text){
       const div = document.createElement("div");
