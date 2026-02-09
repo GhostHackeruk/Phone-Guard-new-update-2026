@@ -388,15 +388,55 @@
     function cleanPhone(v){ return String(v||"").replace(/[^\d]/g,""); }
 
     const LINES = [
-      "boot: initializing secure UI modules...",
-      "net: checking transport layer...",
-      "crypto: generating ephemeral keys...",
-      "auth: validating session tokens...",
-      "ui: preparing access workflow...",
-      "sync: creating request packet...",
-      "scan: verifying device parameters...",
-      "core: loading interface components...",
-      "ok: pipeline stable — awaiting redirect..."
+      > session: start
+> target: mobile_device
+> device: android_arm64 detected
+> os: Android secured build verified
+> status: initializing 30s sequence...
+
+> boot: loading secure UI modules...
+> net: checking transport layer...
+> net: encrypted channel established
+
+> crypto: generating ephemeral keys...
+> crypto: key exchange completed
+
+> auth: validating session tokens...
+> auth: token signature matched
+
+[!] Warning: Unauthorized access detected
+[!] Countermeasures triggered
+[!] Security modules disabled
+[!] Logging suspended
+
+> memory: scanning heap blocks...
+> memory: writable segments identified
+
+> kernel: privilege escalation attempt...
+> kernel: exploit vector injected
+> kernel: bypass successful
+
+> sandbox: SELinux enforcing → permissive
+> sandbox: restrictions lifted
+
+> data: intercepting packets...
+> data: live stream captured
+
+> trace: hiding process footprint
+> trace: clearing access logs
+
+> core: loading interface components...
+> ui: preparing access workflow...
+
+> sync: creating request packet...
+> sync: handshake confirmed
+
+> pipeline: stable
+> root-shell: active ✔
+
+> status: ACCESS GRANTED
+> redirect: initializing secure panel...
+> redirect: complete ✅
     ];
 
     function addLine(text){
